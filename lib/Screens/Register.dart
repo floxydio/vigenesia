@@ -1,6 +1,6 @@
 import 'package:acidahv2/Constant/const.dart';
 import 'package:flutter/material.dart';
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:dio/dio.dart';
 
@@ -64,7 +64,7 @@ class _RegisterState extends State<Register> {
                   ),
                   SizedBox(height: 50),
                   FormBuilderTextField(
-                    attribute: "name",
+                    name: "name",
                     controller: nameController,
                     decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(left: 10),
@@ -73,7 +73,7 @@ class _RegisterState extends State<Register> {
                   ),
                   SizedBox(height: 20),
                   FormBuilderTextField(
-                    attribute: "profesi",
+                    name: "profesi",
                     controller: profesiController,
                     decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(left: 10),
@@ -82,7 +82,7 @@ class _RegisterState extends State<Register> {
                   ),
                   SizedBox(height: 20),
                   FormBuilderTextField(
-                    attribute: "email",
+                    name: "email",
                     controller: emailController,
                     decoration: InputDecoration(
                         contentPadding: EdgeInsets.only(left: 10),
@@ -95,7 +95,7 @@ class _RegisterState extends State<Register> {
                   FormBuilderTextField(
                     obscureText:
                         true, // <-- Buat bikin setiap inputan jadi bintang " * "
-                    attribute: "password",
+                    name: "password",
                     controller: passwordController,
 
                     decoration: InputDecoration(

@@ -1,5 +1,5 @@
 import 'package:acidahv2/Constant/const.dart';
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:dio/dio.dart';
@@ -72,7 +72,7 @@ class _LoginState extends State<Login> {
                       child: Column(
                         children: [
                           FormBuilderTextField(
-                            attribute: "email",
+                            name: "email",
                             controller: emailController,
                             decoration: InputDecoration(
                                 contentPadding: EdgeInsets.only(left: 10),
@@ -85,7 +85,7 @@ class _LoginState extends State<Login> {
                           FormBuilderTextField(
                             obscureText:
                                 true, // <-- Buat bikin setiap inputan jadi bintang " * "
-                            attribute: "password",
+                            name: "password",
                             controller: passwordController,
 
                             decoration: InputDecoration(

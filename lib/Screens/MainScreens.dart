@@ -1,10 +1,13 @@
+import 'dart:convert';
+
 import 'package:acidahv2/Models/Motivasi_Model.dart';
+import 'package:acidahv2/Screens/EditPage.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'Login.dart';
 import 'package:acidahv2/Constant/const.dart';
-import 'dart:convert';
+import 'package:another_flushbar/flushbar.dart';
 
 class MainScreens extends StatefulWidget {
   final String nama;
@@ -16,6 +19,7 @@ class MainScreens extends StatefulWidget {
 
 class _MainScreensState extends State<MainScreens> {
   String baseurl = url;
+  String id;
   var dio = Dio();
   List<MotivasiModel> ass = [];
   TextEditingController titleController = TextEditingController();
@@ -53,9 +57,27 @@ class _MainScreensState extends State<MainScreens> {
     }
   }
 
-  Future<Null> _refresh() {
-    return getData().then((_listproduk) {
-      setState(() => listproduk = _listproduk);
+  Future<dynamic> deletePost(String id) async {
+    dynamic data = {
+      "id": id,
+    };
+    var response = await dio.delete('$baseurl/aci/api/dev/DELETEmotivasi',
+        data: data,
+        options: Options(
+            contentType: Headers.formUrlEncodedContentType,
+            headers: {"Content-type": "application/json"}));
+
+    print(" ${response.data}");
+
+    var resbody = jsonDecode(response.data);
+    return resbody;
+  }
+
+  
+
+  Future<void> _getData() async {
+    setState(() {
+      getData();
     });
   }
 
@@ -76,7 +98,7 @@ class _MainScreensState extends State<MainScreens> {
           // < -- Biar Gak Keluar Area Screen HP
           child: Container(
             child: Padding(
-              padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+              padding: const EdgeInsets.only(left: 30.0, right: 30.0),
               child: Column(
                   mainAxisAlignment: MainAxisAlignment
                       .center, // <-- Berfungsi untuk  atur nilai X jadi tengah
@@ -117,7 +139,19 @@ class _MainScreensState extends State<MainScreens> {
                     ),
                     ElevatedButton(
                         onPressed: () async {
-                          await sendMotivasi(isiController.text.toString());
+                          await sendMotivasi(isiController.text.toString())
+                              .then((value) => {
+                                    if (value != null)
+                                      {
+                                        Flushbar(
+                                          message: "Berhasil Submit",
+                                          duration: Duration(seconds: 2),
+                                          backgroundColor: Colors.greenAccent,
+                                          flushbarPosition:
+                                              FlushbarPosition.TOP,
+                                        ).show(context)
+                                      }
+                                  });
                           print("Sukses");
                         },
                         child: Text("Submit")),
@@ -125,7 +159,12 @@ class _MainScreensState extends State<MainScreens> {
                     SizedBox(
                       height: 40,
                     ),
-
+                    TextButton(
+                      child: Text("Refresh"),
+                      onPressed: () {
+                        _getData();
+                      },
+                    ),
                     FutureBuilder(
                         future: getData(),
                         builder: (BuildContext context,
@@ -134,26 +173,57 @@ class _MainScreensState extends State<MainScreens> {
                             return Column(
                               children: [
                                 for (var item in snapshot.data)
-                                  RefreshIndicator(
-                                    onRefresh: () {},
-                                    child: Stack(
+                                  Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    child: ListView(
+                                      shrinkWrap: true,
                                       children: [
-                                        ListView(
-                                          physics:
-                                              AlwaysScrollableScrollPhysics(),
-                                          shrinkWrap: true,
-                                          children: [Text(item.isiMotivasi)],
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(item.id),
+                                            Text(item.isiMotivasi),
+                                            Row(
+                                              children: [
+                                                TextButton(
+                                                  child: Icon(Icons.settings),
+                                                  onPressed: () {
+                                                    String id;
+                                                    String isi_motivasi;
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (BuildContext
+                                                                  context) =>
+                                                              EditPage(
+                                                                  id: item.id,
+                                                                  isi_motivasi:
+                                                                      item.isiMotivasi),
+                                                        ));
+                                                  },
+                                                ),
+                                                TextButton(
+                                                  child: Icon(Icons.delete),
+                                                  onPressed: () {
+                                                    deletePost(item.id);
+                                                    print(item.id);
+                                                  },
+                                                )
+                                              ],
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                  )
+                                  ),
                               ],
                             );
                           } else if (snapshot.hasData &&
                               snapshot.data.isEmpty) {
                             return Text("No Data");
                           } else {
-                            return null;
+                            return CircularProgressIndicator();
                           }
                         })
                   ]),

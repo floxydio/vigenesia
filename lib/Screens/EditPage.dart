@@ -35,7 +35,7 @@ class _EditPageState extends State<EditPage> {
     return response.data;
   }
 
-  TextEditingController isiMotivasiC = TextEditingController(text: "Hai");
+  TextEditingController isiMotivasiC = TextEditingController();
 
   @override
   Widget build(BuildContext context) {

@@ -73,11 +73,11 @@ class _MainScreensState extends State<MainScreens> {
     return resbody;
   }
 
-  
-
   Future<void> _getData() async {
     setState(() {
       getData();
+
+      return CircularProgressIndicator();
     });
   }
 
@@ -87,6 +87,7 @@ class _MainScreensState extends State<MainScreens> {
   void initState() {
     super.initState();
     getData();
+    _getData();
   }
 
   @override
@@ -133,34 +134,39 @@ class _MainScreensState extends State<MainScreens> {
                       controller: isiController,
                       name: "isi_motivasi",
                       decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.only(left: 10),
-                          labelText: "Your Post..."),
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.only(left: 10),
+                      ),
                     ),
-                    ElevatedButton(
-                        onPressed: () async {
-                          await sendMotivasi(isiController.text.toString())
-                              .then((value) => {
-                                    if (value != null)
-                                      {
-                                        Flushbar(
-                                          message: "Berhasil Submit",
-                                          duration: Duration(seconds: 2),
-                                          backgroundColor: Colors.greenAccent,
-                                          flushbarPosition:
-                                              FlushbarPosition.TOP,
-                                        ).show(context)
-                                      }
-                                  });
-                          print("Sukses");
-                        },
-                        child: Text("Submit")),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: ElevatedButton(
+                          onPressed: () async {
+                            await sendMotivasi(isiController.text.toString())
+                                .then((value) => {
+                                      if (value != null)
+                                        {
+                                          Flushbar(
+                                            message: "Berhasil Submit",
+                                            duration: Duration(seconds: 2),
+                                            backgroundColor: Colors.greenAccent,
+                                            flushbarPosition:
+                                                FlushbarPosition.TOP,
+                                          ).show(context)
+                                        }
+                                    });
+
+                            _getData();
+                            print("Sukses");
+                          },
+                          child: Text("Submit")),
+                    ),
 
                     SizedBox(
                       height: 40,
                     ),
                     TextButton(
-                      child: Text("Refresh"),
+                      child: Icon(Icons.refresh),
                       onPressed: () {
                         _getData();
                       },
@@ -178,41 +184,62 @@ class _MainScreensState extends State<MainScreens> {
                                     child: ListView(
                                       shrinkWrap: true,
                                       children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(item.id),
-                                            Text(item.isiMotivasi),
-                                            Row(
-                                              children: [
-                                                TextButton(
-                                                  child: Icon(Icons.settings),
-                                                  onPressed: () {
-                                                    String id;
-                                                    String isi_motivasi;
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              EditPage(
-                                                                  id: item.id,
-                                                                  isi_motivasi:
-                                                                      item.isiMotivasi),
-                                                        ));
-                                                  },
-                                                ),
-                                                TextButton(
-                                                  child: Icon(Icons.delete),
-                                                  onPressed: () {
-                                                    deletePost(item.id);
-                                                    print(item.id);
-                                                  },
-                                                )
-                                              ],
-                                            ),
-                                          ],
+                                        Expanded(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(item.isiMotivasi),
+                                              Row(
+                                                children: [
+                                                  TextButton(
+                                                    child: Icon(Icons.settings),
+                                                    onPressed: () {
+                                                      String id;
+                                                      String isi_motivasi;
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (BuildContext
+                                                                    context) =>
+                                                                EditPage(
+                                                                    id: item.id,
+                                                                    isi_motivasi:
+                                                                        item.isiMotivasi),
+                                                          ));
+                                                    },
+                                                  ),
+                                                  TextButton(
+                                                    child: Icon(Icons.delete),
+                                                    onPressed: () {
+                                                      deletePost(item.id)
+                                                          .then((value) => {
+                                                                if (value !=
+                                                                    null)
+                                                                  {
+                                                                    Flushbar(
+                                                                      message:
+                                                                          "Berhasil Delete",
+                                                                      duration: Duration(
+                                                                          seconds:
+                                                                              2),
+                                                                      backgroundColor:
+                                                                          Colors
+                                                                              .redAccent,
+                                                                      flushbarPosition:
+                                                                          FlushbarPosition
+                                                                              .TOP,
+                                                                    ).show(
+                                                                        context)
+                                                                  }
+                                                              });
+                                                      _getData();
+                                                    },
+                                                  )
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),

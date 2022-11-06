@@ -5,21 +5,22 @@ import 'dart:convert';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:dio/dio.dart';
 
-import 'package:acidahv2/Constant/const.dart';
+import 'package:vigenesia/Constant/const.dart';
 
-import 'package:acidahv2/Models/Motivasi_Model.dart';
+import 'package:vigenesia/Models/Motivasi_Model.dart';
 
 class EditPage extends StatefulWidget {
-  final String id;
-  final String isi_motivasi;
-  const EditPage({Key key, this.id, this.isi_motivasi}) : super(key: key);
+  final String? id;
+  final String? isi_motivasi;
+  const EditPage({Key? key, this.id, this.isi_motivasi}) : super(key: key);
 
   @override
   _EditPageState createState() => _EditPageState();
 }
 
 class _EditPageState extends State<EditPage> {
-  String baseurl = url;
+  String baseurl =
+      "http://localhost:8000"; // ganti dengan ip address kamu / tempat kamu menyimpan backend
 
   var dio = Dio();
   Future<dynamic> putPost(String isi_motivasi, String ids) async {
@@ -69,18 +70,19 @@ class _EditPageState extends State<EditPage> {
                 ),
                 ElevatedButton(
                     onPressed: () {
-                      putPost(isiMotivasiC.text, widget.id).then((value) => {
-                            if (value != null)
-                              {
-                                Navigator.pop(context),
-                                Flushbar(
-                                  message: "Berhasil Update & Refresh dlu",
-                                  duration: Duration(seconds: 5),
-                                  backgroundColor: Colors.green,
-                                  flushbarPosition: FlushbarPosition.TOP,
-                                ).show(context)
-                              }
-                          });
+                      putPost(isiMotivasiC.text, widget.id.toString())
+                          .then((value) => {
+                                if (value != null)
+                                  {
+                                    Navigator.pop(context),
+                                    Flushbar(
+                                      message: "Berhasil Update & Refresh dlu",
+                                      duration: Duration(seconds: 5),
+                                      backgroundColor: Colors.green,
+                                      flushbarPosition: FlushbarPosition.TOP,
+                                    ).show(context)
+                                  }
+                              });
                     },
                     child: Text("Submit"))
               ],

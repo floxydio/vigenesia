@@ -1,4 +1,4 @@
-import 'package:acidahv2/Constant/const.dart';
+import 'package:vigenesia/Constant/const.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -7,23 +7,24 @@ import 'MainScreens.dart';
 import 'Register.dart';
 import 'package:flutter/gestures.dart';
 import 'dart:convert';
-import 'package:acidahv2/Models/Login_Model.dart';
+import 'package:vigenesia/Models/Login_Model.dart';
 
 class Login extends StatefulWidget {
-  const Login({Key key}) : super(key: key);
+  const Login({Key? key}) : super(key: key);
 
   @override
   _LoginState createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
-  String nama;
+  String? nama;
 
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
 
-  Future<LoginModels> postLogin(String email, String password) async {
+  Future<LoginModels?> postLogin(String email, String password) async {
     var dio = Dio();
-    String baseurl = url;
+    String baseurl =
+        "http://localhost:8000"; // ganti dengan ip address kamu / tempat kamu menyimpan backend
 
     Map<String, dynamic> data = {"email": email, "password": password};
 
@@ -134,14 +135,15 @@ class _LoginState extends State<Login> {
                                             if (value != null)
                                               {
                                                 setState(() {
-                                                  nama = value.data.nama;
+                                                  nama = value.data?.nama;
                                                   Navigator.pushReplacement(
                                                       context,
                                                       new MaterialPageRoute(
                                                           builder: (BuildContext
                                                                   context) =>
                                                               new MainScreens(
-                                                                  nama: nama)));
+                                                                  nama:
+                                                                      nama!)));
                                                 })
                                               }
                                             else if (value == null)

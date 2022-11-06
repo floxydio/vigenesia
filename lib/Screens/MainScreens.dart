@@ -1,27 +1,26 @@
 import 'dart:convert';
 
-import 'package:acidahv2/Models/Motivasi_Model.dart';
-import 'package:acidahv2/Screens/EditPage.dart';
+import 'package:vigenesia/Models/Motivasi_Model.dart';
+import 'package:vigenesia/Screens/EditPage.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'Login.dart';
-import 'package:acidahv2/Constant/const.dart';
 import 'package:another_flushbar/flushbar.dart';
 
 class MainScreens extends StatefulWidget {
-  final String nama;
-  const MainScreens({Key key, this.nama}) : super(key: key);
+  final String? nama;
+  const MainScreens({Key? key, this.nama}) : super(key: key);
 
   @override
   _MainScreensState createState() => _MainScreensState();
 }
 
 class _MainScreensState extends State<MainScreens> {
-  String baseurl = url;
-  String id;
+  String baseurl =
+      "http://localhost:8000"; // ganti dengan ip address kamu / tempat kamu menyimpan backend
+  String? id;
   var dio = Dio();
-  List<MotivasiModel> ass = [];
   TextEditingController titleController = TextEditingController();
 
   Future<dynamic> sendMotivasi(String isi) async {
@@ -76,8 +75,6 @@ class _MainScreensState extends State<MainScreens> {
   Future<void> _getData() async {
     setState(() {
       getData();
-
-      return CircularProgressIndicator();
     });
   }
 
@@ -178,7 +175,7 @@ class _MainScreensState extends State<MainScreens> {
                           if (snapshot.hasData) {
                             return Column(
                               children: [
-                                for (var item in snapshot.data)
+                                for (var item in snapshot.data!)
                                   Container(
                                     width: MediaQuery.of(context).size.width,
                                     child: ListView(
@@ -189,7 +186,7 @@ class _MainScreensState extends State<MainScreens> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(item.isiMotivasi),
+                                              Text(item.isiMotivasi.toString()),
                                               Row(
                                                 children: [
                                                   TextButton(
@@ -212,7 +209,7 @@ class _MainScreensState extends State<MainScreens> {
                                                   TextButton(
                                                     child: Icon(Icons.delete),
                                                     onPressed: () {
-                                                      deletePost(item.id)
+                                                      deletePost(item.id!)
                                                           .then((value) => {
                                                                 if (value !=
                                                                     null)
@@ -247,7 +244,7 @@ class _MainScreensState extends State<MainScreens> {
                               ],
                             );
                           } else if (snapshot.hasData &&
-                              snapshot.data.isEmpty) {
+                              snapshot.data!.isEmpty) {
                             return Text("No Data");
                           } else {
                             return CircularProgressIndicator();

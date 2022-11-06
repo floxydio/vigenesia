@@ -1,11 +1,11 @@
-import 'package:acidahv2/Constant/const.dart';
+import 'package:vigenesia/Constant/const.dart';
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:dio/dio.dart';
 
 class Register extends StatefulWidget {
-  const Register({Key key}) : super(key: key);
+  const Register({Key? key}) : super(key: key);
 
   @override
   _RegisterState createState() => _RegisterState();
@@ -14,7 +14,8 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   // Ganti Base URL
 
-  String baseurl = url;
+  String baseurl =
+      "http://localhost:8000"; // ganti dengan ip address kamu / tempat kamu menyimpan backend
 
   Future postRegister(
       String nama, String profesi, String email, String password) async {

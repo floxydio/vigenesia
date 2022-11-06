@@ -20,11 +20,11 @@ class MotivasiModel {
     this.tanggalUpdate,
   });
 
-  String id;
-  String isiMotivasi;
-  String idKategori;
-  DateTime tanggalInput;
-  String tanggalUpdate;
+  String? id;
+  String? isiMotivasi;
+  String? idKategori;
+  DateTime? tanggalInput;
+  String? tanggalUpdate;
 
   factory MotivasiModel.fromJson(Map<String, dynamic> json) => MotivasiModel(
         id: json["id"],
@@ -39,7 +39,7 @@ class MotivasiModel {
         "isi_motivasi": isiMotivasi,
         "id_kategori": idKategori,
         "tanggal_input":
-            "${tanggalInput.year.toString().padLeft(4, '0')}-${tanggalInput.month.toString().padLeft(2, '0')}-${tanggalInput.day.toString().padLeft(2, '0')}",
+            "${tanggalInput?.year.toString().padLeft(4, '0')}-${tanggalInput?.month.toString().padLeft(2, '0')}-${tanggalInput?.day.toString().padLeft(2, '0')}",
         "tanggal_update": tanggalUpdate,
       };
 }

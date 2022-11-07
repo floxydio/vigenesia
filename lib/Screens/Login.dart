@@ -24,12 +24,12 @@ class _LoginState extends State<Login> {
   Future<LoginModels?> postLogin(String email, String password) async {
     var dio = Dio();
     String baseurl =
-        "http://localhost:8000"; // ganti dengan ip address kamu / tempat kamu menyimpan backend
+        "http://vigenesia.org"; // ganti dengan ip address kamu / tempat kamu menyimpan backend
 
     Map<String, dynamic> data = {"email": email, "password": password};
 
     try {
-      final response = await dio.post("$baseurl/aci/api/login/",
+      final response = await dio.post("$baseurl/api/login/",
           data: data,
           options: Options(headers: {'Content-type': 'application/json'}));
 

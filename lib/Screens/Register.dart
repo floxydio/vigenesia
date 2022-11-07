@@ -15,7 +15,7 @@ class _RegisterState extends State<Register> {
   // Ganti Base URL
 
   String baseurl =
-      "http://localhost:8000"; // ganti dengan ip address kamu / tempat kamu menyimpan backend
+      "http://vigenesia.org"; // ganti dengan ip address kamu / tempat kamu menyimpan backend
 
   Future postRegister(
       String nama, String profesi, String email, String password) async {
@@ -29,7 +29,7 @@ class _RegisterState extends State<Register> {
     };
 
     try {
-      final response = await dio.post("$baseurl/aci/api/registrasi/",
+      final response = await dio.post("$baseurl/api/registrasi/",
           data: data,
           options: Options(headers: {'Content-type': 'application/json'}));
 

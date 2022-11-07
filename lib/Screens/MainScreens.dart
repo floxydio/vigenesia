@@ -18,7 +18,7 @@ class MainScreens extends StatefulWidget {
 
 class _MainScreensState extends State<MainScreens> {
   String baseurl =
-      "http://localhost:8000"; // ganti dengan ip address kamu / tempat kamu menyimpan backend
+      "http://vigenesia.org"; // ganti dengan ip address kamu / tempat kamu menyimpan backend
   String? id;
   var dio = Dio();
   TextEditingController titleController = TextEditingController();
@@ -30,7 +30,7 @@ class _MainScreensState extends State<MainScreens> {
 
     try {
       Response response =
-          await dio.post("$baseurl/aci/api/dev/POSTmotivasi/", data: body);
+          await dio.post("$baseurl/api/dev/POSTmotivasi/", data: body);
 
       print("Respon -> ${response.data} + ${response.statusCode}");
 
@@ -43,7 +43,7 @@ class _MainScreensState extends State<MainScreens> {
   List<MotivasiModel> listproduk = [];
 
   Future<List<MotivasiModel>> getData() async {
-    var response = await dio.get('$baseurl/aci/api/Get_motivasi');
+    var response = await dio.get('$baseurl/api/Get_motivasi');
 
     print(" ${response.data}");
     if (response.statusCode == 200) {
@@ -60,7 +60,7 @@ class _MainScreensState extends State<MainScreens> {
     dynamic data = {
       "id": id,
     };
-    var response = await dio.delete('$baseurl/aci/api/dev/DELETEmotivasi',
+    var response = await dio.delete('$baseurl/api/dev/DELETEmotivasi',
         data: data,
         options: Options(
             contentType: Headers.formUrlEncodedContentType,
@@ -182,6 +182,7 @@ class _MainScreensState extends State<MainScreens> {
                                       shrinkWrap: true,
                                       children: [
                                         Expanded(
+                                          flex: 1,
                                           child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,

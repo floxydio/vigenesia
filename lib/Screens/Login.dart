@@ -9,6 +9,7 @@ import 'package:flutter/gestures.dart';
 import 'dart:convert';
 import 'package:vigenesia/Models/Login_Model.dart';
 
+
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
 
@@ -21,7 +22,7 @@ class _LoginState extends State<Login> {
 
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
 
-  Future<LoginModels?> postLogin(String email, String password) async {
+  Future<LoginData?> postLogin(String email, String password) async {
     var dio = Dio();
     String baseurl =
         "http://vigenesia.org"; // ganti dengan ip address kamu / tempat kamu menyimpan backend
@@ -36,8 +37,7 @@ class _LoginState extends State<Login> {
       print("Respon -> ${response.data} + ${response.statusCode}");
 
       if (response.statusCode == 200) {
-        final loginModel = LoginModels.fromJson(response.data);
-
+        final loginModel = LoginData.fromJson(response.data["data"]);
         return loginModel;
       }
     } catch (e) {
@@ -134,17 +134,15 @@ class _LoginState extends State<Login> {
                                       .then((value) => {
                                             if (value != null)
                                               {
-                                                setState(() {
-                                                  nama = value.data?.nama;
-                                                  Navigator.pushReplacement(
+                                                Navigator.pushReplacement(
                                                       context,
                                                       new MaterialPageRoute(
                                                           builder: (BuildContext
                                                                   context) =>
                                                               new MainScreens(
                                                                   nama:
-                                                                      nama!)));
-                                                })
+                                                                      value.nama,idUser: value.iduser)))
+                                              
                                               }
                                             else if (value == null)
                                               {

@@ -10,7 +10,8 @@ import 'package:another_flushbar/flushbar.dart';
 
 class MainScreens extends StatefulWidget {
   final String? nama;
-  const MainScreens({Key? key, this.nama}) : super(key: key);
+  final String? idUser;
+  const MainScreens({Key? key, this.nama, this.idUser}) : super(key: key);
 
   @override
   _MainScreensState createState() => _MainScreensState();
@@ -26,13 +27,17 @@ class _MainScreensState extends State<MainScreens> {
   Future<dynamic> sendMotivasi(String isi) async {
     Map<String, dynamic> body = {
       "isi_motivasi": isi,
+      "iduser" : widget.idUser
     };
 
     try {
       Response response =
-          await dio.post("$baseurl/api/dev/POSTmotivasi/", data: body);
-
-      print("Respon -> ${response.data} + ${response.statusCode}");
+          await dio.post("$baseurl/api/dev/POSTmotivasi", data: body, options: Options(
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              "Accept": "application/json"
+            }
+          ));
 
       return response;
     } catch (e) {
@@ -45,11 +50,14 @@ class _MainScreensState extends State<MainScreens> {
   Future<List<MotivasiModel>> getData() async {
     var response = await dio.get('$baseurl/api/Get_motivasi');
 
-    print(" ${response.data}");
     if (response.statusCode == 200) {
       var getUsersData = response.data as List;
       var listUsers =
           getUsersData.map((i) => MotivasiModel.fromJson(i)).toList();
+        setState(() {
+          listproduk = listUsers;
+        
+        });
       return listUsers;
     } else {
       throw Exception('Failed to load');
@@ -57,34 +65,29 @@ class _MainScreensState extends State<MainScreens> {
   }
 
   Future<dynamic> deletePost(String id) async {
-    dynamic data = {
+    Map<String,dynamic> data = {
       "id": id,
     };
     var response = await dio.delete('$baseurl/api/dev/DELETEmotivasi',
         data: data,
         options: Options(
-            contentType: Headers.formUrlEncodedContentType,
-            headers: {"Content-type": "application/json"}));
+            headers: {"Content-Type": "application/x-www-form-urlencoded"}));
 
-    print(" ${response.data}");
-
-    var resbody = jsonDecode(response.data);
-    return resbody;
+    return response.data;
   }
 
-  Future<void> _getData() async {
-    setState(() {
-      getData();
-    });
-  }
 
   TextEditingController isiController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    getData();
-    _getData();
+    getData().then((value) => {
+      setState(() {
+        listproduk = value;
+      
+      })
+    });
   }
 
   @override
@@ -139,7 +142,8 @@ class _MainScreensState extends State<MainScreens> {
                       width: MediaQuery.of(context).size.width,
                       child: ElevatedButton(
                           onPressed: () async {
-                            await sendMotivasi(isiController.text.toString())
+                            if (isiController.text.isNotEmpty) {
+                                 await sendMotivasi(isiController.text.toString())
                                 .then((value) => {
                                       if (value != null)
                                         {
@@ -149,12 +153,20 @@ class _MainScreensState extends State<MainScreens> {
                                             backgroundColor: Colors.greenAccent,
                                             flushbarPosition:
                                                 FlushbarPosition.TOP,
-                                          ).show(context)
+                                          ).show(context),
+                                          getData()
                                         }
                                     });
 
-                            _getData();
-                            print("Sukses");
+                            } else {
+                              Flushbar(
+                                message: "Isi Motivasi Tidak Boleh Kosong",
+                                duration: Duration(seconds: 2),
+                                backgroundColor: Colors.redAccent,
+                                flushbarPosition: FlushbarPosition.TOP,
+                              ).show(context);
+                            }
+                         
                           },
                           child: Text("Submit")),
                     ),
@@ -165,52 +177,46 @@ class _MainScreensState extends State<MainScreens> {
                     TextButton(
                       child: Icon(Icons.refresh),
                       onPressed: () {
-                        _getData();
+                        setState(() {
+                          
+                        getData();
+                        });
                       },
                     ),
-                    FutureBuilder(
-                        future: getData(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<List<MotivasiModel>> snapshot) {
-                          if (snapshot.hasData) {
-                            return Column(
-                              children: [
-                                for (var item in snapshot.data!)
-                                  Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    child: ListView(
-                                      shrinkWrap: true,
-                                      children: [
-                                        Expanded(
-                                          flex: 1,
-                                          child: Row(
+                
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: ScrollPhysics(),
+                      itemCount: listproduk.length,
+                      itemBuilder: (context, i) {
+                        return Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Text(item.isiMotivasi.toString()),
-                                              Row(
+                                              SizedBox(
+                                                width: MediaQuery.of(context).size.width / 2,
+                                                child: Text(listproduk[i].isiMotivasi.toString(), overflow: TextOverflow.clip,)),
+                                               Row(
                                                 children: [
                                                   TextButton(
                                                     child: Icon(Icons.settings),
                                                     onPressed: () {
-                                                      String id;
-                                                      String isi_motivasi;
                                                       Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
                                                             builder: (BuildContext
                                                                     context) =>
                                                                 EditPage(
-                                                                    id: item.id,
+                                                                    id: listproduk[i].id,
                                                                     isi_motivasi:
-                                                                        item.isiMotivasi),
+                                                                        listproduk[i].isiMotivasi),
                                                           ));
                                                     },
                                                   ),
                                                   TextButton(
                                                     child: Icon(Icons.delete),
                                                     onPressed: () {
-                                                      deletePost(item.id!)
+                                                      deletePost(listproduk[i].id!)
                                                           .then((value) => {
                                                                 if (value !=
                                                                     null)
@@ -228,29 +234,17 @@ class _MainScreensState extends State<MainScreens> {
                                                                           FlushbarPosition
                                                                               .TOP,
                                                                     ).show(
-                                                                        context)
+                                                                        context),
+
+                                                                        getData()
                                                                   }
                                                               });
-                                                      _getData();
                                                     },
                                                   )
                                                 ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            );
-                          } else if (snapshot.hasData &&
-                              snapshot.data!.isEmpty) {
-                            return Text("No Data");
-                          } else {
-                            return CircularProgressIndicator();
-                          }
-                        })
+                        )]);
+                      })
+
                   ]),
             ),
           ),
